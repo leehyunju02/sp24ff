@@ -31,11 +31,10 @@ $(LDSO): $(LOBJS)
 dynamic: $(TARG_DYNAMIC)
 
 $(TARG_DYNAMIC): $(OBJS) $(LDSO)
-	$(CC) -o $(TARG_DYNAMIC) $(OBJS) -L. -lkvs
+	$(CC) -o $(TARG_DYNAMIC) $(OBJS) -L. -lkvs -Wl,-rpath,.
 
 %.o: %.c
 	$(CC) $(OPTS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) $(LOBJS) $(LARS) $(LDSO) $(TARG) $(TARG_DYNAMIC)
-
