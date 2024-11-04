@@ -5,22 +5,18 @@
 
 char* get(kvs_t* kvs, const char* key)
 {
-    for (int i = 0; i < kvs->size; i++) {
-        if (strcmp(kvs->data[i].key, key) == 0) {
-            strcpy(value, kvs->data[i].value);
+    node_t *current = kvs->db;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            char* value = (char*)malloc(strlen(current->value) + 1);
+            if (!value) {
+                printf("Failed to malloc\n");
+                return NULL;
+            }
+            strcpy(value, current->value);
             return value;
         }
+        current = current->next;
     }
-
     return NULL;
-    
-    char* value = (char*)malloc(sizeof(char)*100);
-
-    if(!value){
-        printf("Failed to malloc\n");
-        return NULL;
-    }
-
-    strcpy(value, "deadbeaf");
-    return value;
 }
