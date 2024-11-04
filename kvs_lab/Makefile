@@ -14,24 +14,28 @@ LDSO = libkvs.so
 
 all: static dynamic
 
+# Static target
 static: $(TARG)
 
-$(TARG) : $(OBJS) $(LARS)
+$(TARG): $(OBJS) $(LARS)
 	$(CC) -o $(TARG) $(OBJS) $(LIBS) -static
 
-$(LARS) : $(LOBJS)
+$(LARS): $(LOBJS)
 	ar rs $(LARS) $(LOBJS)
 
-%.o: %.c
-	$(CC) $(OPTS) -c $< -o $@
+# Shared library for dynamic target
+$(LDSO): $(LOBJS)
+	$(CC) -shared -fPIC -o $(LDSO) $(LOBJS)
 
+# Dynamic target
 dynamic: $(TARG_DYNAMIC)
 
 $(TARG_DYNAMIC): $(OBJS) $(LDSO)
 	$(CC) -o $(TARG_DYNAMIC) $(OBJS) -L. -lkvs
 
-$(LDSO): $(LOBJS)
-	$(CC) -shared -fPIC -o $(LDSO) $(LOBJS)
+%.o: %.c
+	$(CC) $(OPTS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) $(LOBJS) $(LARS) $(LDSO) $(TARG) $(TARG_DYNAMIC)
+
