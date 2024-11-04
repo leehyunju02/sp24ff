@@ -21,6 +21,15 @@ int main()
         return -1;
     }
 
+    // answer.dat 파일을 쓰기 모드로 열기
+    FILE *output_file = fopen("answer.dat", "w");
+    if (!output_file) {
+        printf("Failed to open answer.dat\n");
+        close(kvs);
+        fclose(file);
+        return -1;
+    }
+
     char operation[10];
     char key[100];
     char value[100];
@@ -33,25 +42,27 @@ int main()
             // Read the value for put operation
             if (fscanf(file, "%s", value) == 1) {
                 if (put(kvs, key, value) == -1) {
-                    printf("Failed to put (%s, %s) into kvs\n", key, value);
+                    fprintf(output_file, "Failed to put (%s, %s) into kvs\n", key, value);
                 }
             } else {
-                printf("Failed to read value for key %s\n", key);
+                fprintf(output_file, "Failed to read value for key %s\n", key);
             }
         } else if (strcmp(operation, "get") == 0) {
             char* result = get(kvs, key);
             if (result) {
-                printf("Get: key = %s, value = %s\n", key, result);
+                fprintf(output_file, "Get: key = %s, value = %s\n", key, result);
                 free(result);
             } else {
-                printf("Get: key = %s not found\n", key);
+                fprintf(output_file, "Get: key = %s not found\n", key);
             }
         } else {
-            printf("Unknown operation: %s\n", operation);
+            fprintf(output_file, "Unknown operation: %s\n", operation);
         }
     }
 
+    // 파일 닫기
     fclose(file);
+    fclose(output_file);
     close(kvs);
 	
     return 0;
